@@ -38,7 +38,8 @@ export const ProductsPage = () => {
           throw new Error("Failed to fetch product IDs");
         }
 
-        const productIds = response.data.result;
+        // Удаление повторяющихся productIds
+        const productIds = [...new Set(response.data.result)];
 
         if (productIds.length === 0) {
           setProducts([]);
@@ -46,7 +47,7 @@ export const ProductsPage = () => {
           return;
         }
 
-        // Второй запрос для получения  информации о товарах
+        // Второй запрос для получения информации о товарах
         const secondResponse = await axios.post(
           "http://api.valantis.store:40000/",
           {
@@ -65,6 +66,7 @@ export const ProductsPage = () => {
         }
 
         const detailedProducts = secondResponse.data.result;
+        console.log(secondResponse.data.result);
 
         // Обновление products
         setProducts(detailedProducts);
@@ -90,10 +92,11 @@ export const ProductsPage = () => {
     <div>
       <h1>Products</h1>
       <ul>
-        {products.map((product) => (
-          <li key={product.id}>
-            <h2>{product.name}</h2>
-            <p>{product.description}</p>
+        {products.map((product, index) => (
+          <li key={`${product.id}_${index}`}>
+            <h2>{product.product}</h2>
+            {product?.brand && <p>Brand: {product.brand}</p>}
+            <p>Price:{product.price}</p>
           </li>
         ))}
       </ul>
