@@ -14,16 +14,17 @@ export const ProductsPage = () => {
           .toISOString()
           .split("T")[0]
           .replace(/-/g, ""); // Генерация таймштампа
-        const password = "Valantis"; //  пароль
+        const password = "Valantis"; // пароль
         const authString = md5(`${password}_${timestamp}`); // Формирование строки авторизации
 
+        // Первый запрос для получения списка идентификаторов товаров
         const response = await axios.post(
           "http://api.valantis.store:40000/",
           {
             action: "get_ids",
             params: {
               offset: 0,
-              limit: 50,
+              limit: 10,
             },
           },
           {
@@ -40,18 +41,36 @@ export const ProductsPage = () => {
         const productIds = response.data.result;
 
         if (productIds.length === 0) {
-          setProducts([response.data.result]);
+          setProducts([]);
           setLoading(false);
           return;
         }
-        // console.log(response.data.result);
 
-        // выполняем запрос для получения подробной информации о товарах, используя productIds
+        // Второй запрос для получения  информации о товарах
+        const secondResponse = await axios.post(
+          "http://api.valantis.store:40000/",
+          {
+            action: "get_items",
+            params: { ids: productIds },
+          },
+          {
+            headers: {
+              "X-Auth": authString,
+            },
+          }
+        );
 
+        if (!secondResponse.data.result) {
+          throw new Error("Failed to fetch product details");
+        }
+
+        const detailedProducts = secondResponse.data.result;
+
+        // Обновление products
+        setProducts(detailedProducts);
         setLoading(false);
       } catch (error) {
         setError(error.message);
-        console.log(setError);
         setLoading(false);
       }
     };
