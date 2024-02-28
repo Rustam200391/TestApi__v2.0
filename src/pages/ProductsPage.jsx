@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import md5 from "md5"; // Импортируем библиотеку для вычисления MD5
 
-const ProductsPage = () => {
+export const ProductsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [products, setProducts] = useState([]);
@@ -79,5 +79,3 @@ const ProductsPage = () => {
     </div>
   );
 };
-
-export default ProductsPage;
