@@ -1,26 +1,52 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
+import md5 from "md5"; // Импортируем библиотеку для вычисления MD5
 
-export const ProductsPage = () => {
-  // States for storing download information
-  const [loading, setLoading] = useState(true); // Флаг загрузки
-  const [error, setError] = useState(null); // Сообщение об ошибке
-  const [products, setProducts] = useState([]); // Список товаров
+const ProductsPage = () => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    // Function for loading products
     const fetchProducts = async () => {
       try {
-        // API request
-        const response = await fetch(
-          "http://api.valantis.store:41000/products"
+        const timestamp = new Date()
+          .toISOString()
+          .split("T")[0]
+          .replace(/-/g, ""); // Генерация таймштампа
+        const password = "Valantis"; //  пароль
+        const authString = md5(`${password}_${timestamp}`); // Формирование строки авторизации
+
+        const response = await axios.post(
+          "http://api.valantis.store:40000/",
+          {
+            action: "get_ids",
+            params: {
+              offset: 0,
+              limit: 10,
+            },
+          },
+          {
+            headers: {
+              "X-Auth": authString, // Передача авторизационной строки в заголовке
+            },
+          }
         );
-        // request success rate
-        if (!response.ok) {
-          throw new Error("Failed to fetch products");
+
+        if (!response.data.result) {
+          throw new Error("Failed to fetch product IDs");
         }
 
-        const data = await response.json();
-        setProducts(data);
+        const productIds = response.data.result;
+
+        if (productIds.length === 0) {
+          setProducts([]);
+          setLoading(false);
+          return;
+        }
+
+        // выполняем запрос для получения подробной информации о товарах, используя productIds
+
         setLoading(false);
       } catch (error) {
         setError(error.message);
@@ -29,19 +55,16 @@ export const ProductsPage = () => {
     };
 
     fetchProducts();
-  }, []); // useEffect is called only once
+  }, []);
 
-  // If the data is being loaded, we display a message about loading
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  // error message
   if (error) {
     return <div>Error: {error}</div>;
   }
 
-  // If uploaded successfully, we display the list of products
   return (
     <div>
       <h1>Products</h1>
@@ -56,3 +79,5 @@ export const ProductsPage = () => {
     </div>
   );
 };
+
+export default ProductsPage;
