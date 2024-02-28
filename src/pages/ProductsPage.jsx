@@ -23,7 +23,7 @@ export const ProductsPage = () => {
             action: "get_ids",
             params: {
               offset: 0,
-              limit: 10,
+              limit: 50,
             },
           },
           {
@@ -40,16 +40,18 @@ export const ProductsPage = () => {
         const productIds = response.data.result;
 
         if (productIds.length === 0) {
-          setProducts([]);
+          setProducts([response.data.result]);
           setLoading(false);
           return;
         }
+        // console.log(response.data.result);
 
         // выполняем запрос для получения подробной информации о товарах, используя productIds
 
         setLoading(false);
       } catch (error) {
         setError(error.message);
+        console.log(setError);
         setLoading(false);
       }
     };
