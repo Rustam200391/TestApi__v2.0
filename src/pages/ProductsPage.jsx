@@ -73,9 +73,9 @@ export const ProductsPage = () => {
         // Обновление products
         setProducts(detailedProducts);
         setLoading(false);
-      } catch (data) {
-        console.error("API Error ID:", data.response?.data);
-        setError(data.message);
+      } catch (error) {
+        console.error("API Error ID:", error.response?.data);
+        setError(error.message);
         setLoading(false);
       }
     };
