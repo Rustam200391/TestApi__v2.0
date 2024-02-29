@@ -90,14 +90,12 @@ export const ProductsPage = () => {
     indexOfLastProduct
   );
 
-  // Функция для перехода на предыдущую страницу
   const goToPrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage((prevPage) => prevPage - 1);
     }
   };
 
-  // Функция для перехода на следующую страницу
   const goToNextPage = () => {
     if (indexOfLastProduct < products.length) {
       setCurrentPage((prevPage) => prevPage + 1);
@@ -105,7 +103,6 @@ export const ProductsPage = () => {
   };
 
   useEffect(() => {
-    // Сохраняем currentPage в localStorage
     localStorage.setItem("currentPage", currentPage.toString());
   }, [currentPage]);
 
