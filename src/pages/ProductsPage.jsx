@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import md5 from "md5";
+import md5 from "md5"; //
+
 export const ProductsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,6 +21,7 @@ export const ProductsPage = () => {
         const password = "Valantis"; // пароль
         const authString = md5(`${password}_${timestamp}`);
 
+        // Первый запрос
         const response = await axios.post(
           "http://api.valantis.store:40000/",
           {
@@ -31,7 +33,7 @@ export const ProductsPage = () => {
           },
           {
             headers: {
-              "X-Auth": authString, // Строка в заголовке
+              "X-Auth": authString,
             },
           }
         );
@@ -48,7 +50,7 @@ export const ProductsPage = () => {
           return;
         }
 
-        // Второй запрос
+        // Второй запрос для получения
         const secondResponse = await axios.post(
           "http://api.valantis.store:40000/",
           {
@@ -71,20 +73,10 @@ export const ProductsPage = () => {
         // Обновление products
         setProducts(detailedProducts);
         setLoading(false);
-      } catch (error) {
-        // При ошибки в ответе API
-        if (
-          error.response &&
-          error.response.data &&
-          error.response.data.error
-        ) {
-          console.error("API Error:", error.response.data.error);
-          // Повторяем запрос
-          fetchProducts();
-        } else {
-          setError(error.message);
-          setLoading(false);
-        }
+      } catch (data) {
+        console.error("API Error ID:", data.response?.data);
+        setError(data.message);
+        setLoading(false);
       }
     };
 
@@ -98,14 +90,14 @@ export const ProductsPage = () => {
     indexOfLastProduct
   );
 
-  //пагинция
+  // Функция для перехода на предыдущую страницу
   const goToPrevPage = () => {
     if (currentPage > 1) {
       setCurrentPage((prevPage) => prevPage - 1);
     }
   };
 
-  // пагинция
+  // Функция для перехода на следующую страницу
   const goToNextPage = () => {
     if (indexOfLastProduct < products.length) {
       setCurrentPage((prevPage) => prevPage + 1);
@@ -113,7 +105,7 @@ export const ProductsPage = () => {
   };
 
   useEffect(() => {
-    //  localStorage
+    // Сохраняем currentPage в localStorage
     localStorage.setItem("currentPage", currentPage.toString());
   }, [currentPage]);
 
@@ -138,7 +130,7 @@ export const ProductsPage = () => {
           </li>
         ))}
       </ol>
-      {/* пагинация */}
+      {/* Кнопки для перехода между страницами */}
       <div>
         <button onClick={goToPrevPage} disabled={currentPage === 1}>
           Предыдущая страница
