@@ -48,7 +48,7 @@ export const ProductsPage = () => {
           return;
         }
 
-        // Второй запрос о товарах
+        // Второй запрос
         const secondResponse = await axios.post(
           "http://api.valantis.store:40000/",
           {
