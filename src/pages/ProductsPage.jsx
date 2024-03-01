@@ -115,26 +115,33 @@ export const ProductsPage = () => {
   }
 
   return (
-    <div>
-      <h1>Products:</h1>
-      <ol>
+    <div className="container">
+      <h1 className="heading">Products:</h1>
+      <ol className="products-list">
         {currentProducts.map((product, index) => (
-          <li key={`${product.id}_${index}`}>
+          <li key={`${product.id}_${index}`} className="product-item">
             {/* отрисовываем с проверкой, если нуль то не выводим */}
-            {product?.product && <h2>{product.product}</h2>}
-            {product?.brand && <p>Brand: {product.brand}</p>}
-            {product?.price && <p>Price: {product.price}</p>}
+            {product?.product && (
+              <h2 className="product-name">{product.product}</h2>
+            )}
+            {product?.brand && <p className="brand">Brand: {product.brand}</p>}
+            {product?.price && <p className="price">Price: {product.price}</p>}
           </li>
         ))}
       </ol>
       {/* Кнопки для перехода между страницами */}
-      <div>
-        <button onClick={goToPrevPage} disabled={currentPage === 1}>
+      <div className="pagination">
+        <button
+          onClick={goToPrevPage}
+          disabled={currentPage === 1}
+          className="pagination-btn"
+        >
           Предыдущая страница
         </button>
         <button
           onClick={goToNextPage}
           disabled={indexOfLastProduct >= products.length}
+          className="pagination-btn"
         >
           Следующая страница
         </button>
