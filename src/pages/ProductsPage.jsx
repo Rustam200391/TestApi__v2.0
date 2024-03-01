@@ -23,7 +23,7 @@ export const ProductsPage = () => {
 
         // Первый запрос
         const response = await axios.post(
-          "http://api.valantis.store:40000/",
+          "https://api.valantis.store:40000/",
           {
             action: "get_ids",
             params: {
